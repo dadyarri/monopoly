@@ -1,7 +1,7 @@
 import random
 
 
-# Базовый класс, опиывающий игровую сессию
+# Базовый класс, описывающий игровую сессию
 class Base:
     def __init__(self):
         self.players = []  # Список с объектами игроков
@@ -61,11 +61,14 @@ def start_move():
             move = int(input('> '))
         except ValueError:
             print('Ожидается ввод числа')
+            start_move()
         else:
-            if move == 1 and not bankrupt:  # Бросить кубики
+            if move == 1 and not bankrupt:  # Бросить кубики и завершить ход
                 make_move()
+                complete_move()
             elif move == 2:  # Начать управление недвижимостью
                 property_management()
+                start_move()
             elif move == 3:  # Сдаться
                 recognize_bankruptcy()
             else:  # Неизвестная команда
@@ -96,6 +99,8 @@ def make_move():
         game.players[game.current_player].last_coord = game.players[game.current_player].cur_coord  # Сохраняем его
         # предыдущуюю координату
         game.players[game.current_player].cur_coord = f_die + s_die  # Перемещаем игрока на сумму, выпавшую на кубиках
+        if game.players[game.current_player].cur_coord == 30:  # Если игрок попал на ячейку "Отправляйся в тюрьму"
+            go_to_jail()  # Отправляем его в тюрьму
         if game.players[game.current_player].cur_coord > game.cells:  # Если координата игрока больше количества ячеек
             game.players[game.current_player].cur_coord = game.players[game.current_player].cur_coord - game.cells
             # Начинаем новый круг
@@ -106,6 +111,11 @@ def make_move():
         pay_taxes()  # Заплатить налоги
     if f_die == s_die and not game.players[game.current_player].in_jail:
         make_move()
+
+
+def complete_move():
+    print(f'Ход игрока {game.players[game.current_player].name} завершен.')
+    game.current_player += 1
 
 
 def pay_salary(value: int):
@@ -132,13 +142,25 @@ def property_management():
     pass
 
 
+def get_event_card(_type: str):
+    pass
+
+
+def prompt(msg: str):
+    resp = input(f'{msg} [Д/Н]:\n> ').lower()
+    if resp == 'д':
+        return True
+    return False
+
+
 def recognize_bankruptcy():
     # Признать банкротство
-    print('Вы действительно хотите сдаться? [Д/Н]')
-    if input().lower() == 'д':  # Подтверждение
+    if prompt('Вы действительно хотите сдаться?'):  # Подтверждение
         print('Серьёзно? Ну хорошо, ваше право...')
         print(f'Удаление игрока {game.players[game.current_player].name}.chr')  # Отсылочка для знающих :)
         game.players.pop(game.current_player)
+    else:
+        print('Не пугайте меня так!')
 
 
 def go_to_jail():
