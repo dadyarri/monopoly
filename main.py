@@ -90,10 +90,6 @@ def make_move():
         pay_taxes()
 
 
-def move_events():
-
-
-
 def pay_salary(value: int):
     if game.players[game.current_player].last_coord > game.players[game.current_player].cur_coord:
         print(f'Вы завершили круг. Получите зарплату в размере {value}₩')
