@@ -155,3 +155,6 @@ if __name__ == '__main__':
     while len(game.players) > 1:
         start_move()
     print(f'Игрок {game.players[0].name} одержал победу. Поздравляем!')
+else:
+    print('Игра требует запуска как отдельный файл.')
+    game = None
