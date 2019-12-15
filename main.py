@@ -1,6 +1,5 @@
-import os
 import random
-import time
+
 
 # Базовый класс, описывающий игровую сессию
 class Base:
@@ -9,6 +8,7 @@ class Base:
         self.current_player = 0  # Номер текущего игрока
         self.cells = 39  # Количество ячеек на поле
         self.number_of_players = 0  # Количество игроков
+        self.currency = '₩'
 
 
 # Класс, описывающий игрока, его позицию на поле, баланс, нахождение в тюрьме
@@ -35,6 +35,7 @@ def start_new_game():
     game.number_of_players = int(input('Введите количество игроков:\n> '))
     for i in range(game.number_of_players):
         game.players.append(Player(name=input(f'Введите имя игрока {i + 1}: ')))
+    # Сортировка игроков по возрастанию стартовых очков
     for i in range(len(game.players)):
         # Исходно считаем наименьшим первый элемент
         lowest_value_index = i
@@ -44,17 +45,36 @@ def start_new_game():
                 lowest_value_index = j
         # Самый маленький элемент меняем с первым в списке
         game.players[i], game.players[lowest_value_index] = game.players[lowest_value_index], game.players[i]
+    game.players.reverse()  # Переворот списка игроков, чтобы сортировать игроков по убыванию
+    # Вывод порядка хода
+    print('Порядок хода игроков: ', end='')
+    for i in range(len(game.players)):
+        if i != len(game.players) - 1:  # Разделитель между игроками
+            end = ', '  # Если сейчас выводится не последний игрок, тогда выведи после него запятую
+        else:
+            end = '\n'  # Иначе – новую строку
+        print(f'{game.players[i].name}', end=end)
 
 
 def start_move():
     # Начало хода
     print(f'Сейчас ход игрока {game.players[game.current_player].name}.')
-    print(f'Состояние вашего счета: {game.players[game.current_player].cur_balance}₩')
+    print(f'Состояние вашего счета: {game.players[game.current_player].cur_balance}{game.currency}')
     print(f'Вы находитесь на ячейке {game.players[game.current_player].cur_coord}')
     if game.players[game.current_player].in_jail:
         # Если игрок в тюрьме
-        print('Вы в тюрьме и не можете сделать ход.')
-        game.players[game.current_player] -= 1  # Вычитаем один ход из его заключения
+        print('Вы в тюрьме и не можете сделать ход но можете попытаться освободиться, если у вас выпадет дубль.')
+        f_die, s_die = throw_a_die()  # Пытаемся освободить игрока
+        print('Бросаю кубики...', end=' ')
+        print(f'На кубиках выпало {f_die} и {s_die}.')
+        if f_die == s_die:  # Если выпадает дубль, то освобождаем
+            print(f'У вас получилось освободиться. Ваш ход, {game.players[game.current_player].name}.')
+            game.players[game.current_player].in_jail = False
+            game.players[game.current_player].left_in_jail = 0
+            start_move()  # И даем право сходиться еще раз
+        else:  # Иначе, просто вычитаем 1 ход из заключения
+            print('Не повезло...')
+            game.players[game.current_player].left_in_jail -= 1  # Вычитаем один ход из его заключения
         if game.players[game.current_player].left_in_jail == 0:  # Если время заключения прошло
             print('Вы вышли из тюрьмы.')
             game.players[game.current_player].in_jail = False  # Освобождаем игрока
@@ -137,19 +157,18 @@ def pay_salary(value: int):
     # Зарплата за прохождение круга
     if game.players[game.current_player].last_coord > game.players[game.current_player].cur_coord:  # Если игрок
         # закончил круг (предыдущая координата больше текущей)
-        print(f'Вы завершили круг. Получите зарплату в размере {value}₩')
+        print(f'Вы завершили круг. Получите зарплату в размере {value}{game.currency}')
         game.players[game.current_player].cur_balance += value
 
 
 def pay_taxes():
-    # Если игрок попал на клетку с налогами
-    if game.players[game.current_player].cur_coord == 4 or game.players[game.current_player].cur_coord == 38:
-        print('Вы попали на клетку с налогами.')
     if game.players[game.current_player].cur_coord == 4:  # Если игрок попал на ячейку "Подоходный налог"
-        print('Подоходный налог. С вашего счета списано 200₩')
+        print('Вы попали на клетку с налогами.')
+        print('Подоходный налог. С вашего счета списано 200{game.currency}')
         game.players[game.current_player].cur_balance -= 200
     if game.players[game.current_player].cur_coord == 38:  # Если игрок попал на ячейку "Налог на роскошь"
-        print('Налог на роскошь. С вашего счета списано 100₩')
+        print('Вы попали на клетку с налогами.')
+        print('Налог на роскошь. С вашего счета списано 100{game.currency}')
         game.players[game.current_player].cur_balance -= 100
 
 
@@ -195,10 +214,11 @@ if __name__ == '__main__':
             start_move()
     except KeyboardInterrupt:
         print('Игра завершена без сохранения прогресса.')
-    try:
-        print(f'Игрок {game.players[0].name} одержал победу. Поздравляем!')
-    except IndexError:
-        pass
+    else:
+        try:
+            print(f'Игрок {game.players[0].name} одержал победу. Поздравляем!')
+        except IndexError:
+            pass
 else:
     print('Игра требует запуска как отдельный файл.')
     game = None
