@@ -1,4 +1,4 @@
-fields = [
+field = [
     {
         'name': 'Старт',
         'owned_by': None,

@@ -1,9 +1,12 @@
 import random
 
+import data
+
 
 # Базовый класс, описывающий игровую сессию
 class Base:
     def __init__(self):
+        self.field = data.field
         self.players = []  # Список с объектами игроков
         self.current_player = 0  # Номер текущего игрока
         self.cells = 39  # Количество ячеек на поле
