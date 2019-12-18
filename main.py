@@ -96,9 +96,9 @@ def start_move():
             escape_from_jail()
         else:
             game.cp.left_in_jail -= 1  # Вычитаем один ход из его заключения
-            if game.cp.left_in_jail != 0:
-                print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} ходов.')
-        if game.cp.left_in_jail == 0:  # Если время заключения прошло
+        if game.cp.left_in_jail != 0:
+            print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} ходов.')
+        else:  # Если время заключения прошло
             print('Вы вышли из тюрьмы.')
             game.cp.in_jail = False  # Освобождаем игрока
             start_move()  # И даем возможность сходиться
@@ -106,6 +106,7 @@ def start_move():
         bankrupt = False
         if game.cp.cur_balance <= 0:  # Если баланс игрока меньше или равен нулю, тогда
             print('Вы банкрот, голубчик!')
+            game.cp.cur_balance = 0
             bankrupt = True  # Признаем его банкротом
         print(f'Выберите действие:\n')
         if not bankrupt:  # И ограничиваем действия
@@ -121,8 +122,11 @@ def start_move():
             if not bankrupt:
                 if move in [1, 2, 3]:
                     if move == 1:  # Бросить кубики и завершить ход
+                        print('бросаем кубики и делаем ход.')
                         make_move()  # Сделать ход
+                        print('выполняем действия карточки.')
                         move_actions()
+                        print('завершаем ход.')
                         complete_move()
                     elif move == 2:  # Начать управление недвижимостью
                         property_management()
@@ -146,22 +150,22 @@ def start_move():
 
 def move_actions():
     print(f'Вы находитесь на ячейке {game.field[game.cp.cur_coord]["name"]}')
-    if game.field[game.cp.cur_coord]["owned_by"] is None:  # Если ячейка никому не принадлежит
-        if game.cp.cur_coord not in [0, 2, 4, 7, 10, 17, 20, 29, 34, 36]:  # Если ячейка не служебная (т. е. ее можно
-            # купить)
-            if game.field[game.cp.cur_coord]["price"] < game.cp.cur_balance:  # Если у игрока достаточно денег
-                if prompt(f'Предприятие никому не принадлежит. Хотите купить?\n'
-                          f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}\n'
-                          f'У вас есть: {game.cp.cur_balance}'):  # Предлагаем игроку купить эту карточку
-                    game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
-                    game.cp.cur_balance -= game.field[game.players[
-                        game.current_player].cur_coord]["price"]
-                    print(f'Успех! Предприятие {game.field[game.cp.cur_coord]["name"]} теперь ваше!')
-                else:
-                    auction()
+    if game.field[game.cp.cur_coord]["owned_by"] is None and game.cp.cur_coord not in [0, 2, 4, 7, 10, 17, 20, 29, 34,
+                                                                                       36]:
+        # Если ячейка никому не принадлежит и если ячейка не служебная (т. е. её можно купить)
+        if game.field[game.cp.cur_coord]["price"] < game.cp.cur_balance:  # Если у игрока достаточно денег
+            if prompt(f'Предприятие никому не принадлежит. Хотите купить?\n'
+                      f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}\n'
+                      f'У вас есть: {game.cp.cur_balance}'):  # Предлагаем игроку купить эту карточку
+                game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
+                game.cp.cur_balance -= game.field[game.players[
+                    game.current_player].cur_coord]["price"]
+                print(f'Успех! Предприятие {game.field[game.cp.cur_coord]["name"]} теперь ваше!')
             else:
-                print('У вас недостаточно средств для покупки этой карточки')
                 auction()
+        else:
+            print('У вас недостаточно средств для покупки этой карточки.')
+            auction()
     else:
         if game.field[game.cp.cur_coord]["owned_by"] is not None:  # Если ячейка принадлежит какому-то игроку
             print(f'Предприятие {game.field[game.cp.cur_coord]["name"]} принадлежит '
@@ -186,13 +190,16 @@ def move_actions():
             game.cp.cur_balance -= value
             game.players[game.field[game.cp.cur_coord]["owned_by"]].cur_balance += value
     if game.cp.cur_coord in [2, 17]:
+        print('chest.')
         get_event_card('chest')
     if game.cp.cur_coord in [7, 34]:
+        print('chance.')
         get_event_card('chance')
+    pay_taxes()  # Заплотить нологе
 
 
 def auction():
-    pass
+    print('аукцион.')
 
 
 def throw_a_die():
@@ -222,7 +229,10 @@ def make_move():
     if f_die == s_die:  # Если выпал дубль
         print('Какая неожиданность! Дубль дает вам право ходить еще раз.')
         game.cp.takes += 1  # Добавляем единицу в счетчик
+        print(f'{game.cp.takes=}')
+        print(f'{game.cp.cur_coord=}')
         move_player(f_die + s_die)
+        print(f'{game.cp.cur_coord=}')
         move_actions()
     else:  # Если цепочка дублей нарушилась
         game.cp.takes = 0  # Обнуляем счетчик дублей
@@ -234,7 +244,6 @@ def make_move():
             go_to_jail()  # Отправляем его в тюрьму
         if game.cp.cur_coord > game.cells:  # Если координата игрока больше количества ячеек
             new_lap()
-        pay_taxes()  # Заплотить нологе
 
 
 def complete_move():
