@@ -1,17 +1,23 @@
+# TODO: Дописать правила игры в README
+# TODO: Добавить сохранение Собственности в объект игрока
+# TODO: Что делать с собственностью игрока, покинувшего игру?
+# TODO: Написать аукцион (вызывается, если игрок не хочет или не может выкупить Собственность)
+# TODO: Написать управление собственностью (аукцион; строительство; залог)
+
 import random
 
-import data
+from data import field
 
 
 # Базовый класс, описывающий игровую сессию
 class Base:
     def __init__(self):
-        self.field = data.field
+        self.field = field  # Берет разметку игрового поля из файла data.py
         self.players = []  # Список с объектами игроков
         self.current_player = 0  # Номер текущего игрока
-        self.cells = 39  # Количество ячеек на поле
+        self.cells = 36  # Количество ячеек на поле
         self.number_of_players = 0  # Количество игроков
-        self.currency = '₩'
+        self.currency = '₩'  # Символ валюты
 
         self.cp = None
 
@@ -26,8 +32,8 @@ class Player:
         self.cur_balance = self.base_balance  # Текущий баланс
 
         self.name = name  # Отображаемое имя
-        f_die, s_die = throw_a_die()
-        self.start_score = f_die + s_die  # Начальный бросок кубика
+
+        self.start_score = sum(throw_a_die())  # Начальный бросок кубика
         self.takes = 0  # Дублей выпало
 
         self.in_jail = False  # Игрок в тюрьме?
@@ -38,77 +44,88 @@ class Player:
 def start_new_game():
     # Начало новой игры
     print('*********\nMONOPOLY\n*********\n')
-    game.number_of_players = int(input('Введите количество игроков:\n> '))
-    for i in range(game.number_of_players):
-        game.players.append(Player(name=input(f'Введите имя игрока {i + 1}: ')))
-    # Сортировка игроков по возрастанию стартовых очков
-    for i in range(len(game.players)):
-        # Исходно считаем наименьшим первый элемент
-        lowest_value_index = i
-        # Этот цикл перебирает несортированные элементы
-        for j in range(i + 1, len(game.players)):
-            if game.players[j].start_score < game.players[lowest_value_index].start_score:
-                lowest_value_index = j
-        # Самый маленький элемент меняем с первым в списке
-        game.players[i], game.players[lowest_value_index] = game.players[lowest_value_index], game.players[i]
-    game.players.reverse()  # Переворот списка игроков, чтобы сортировать игроков по убыванию
-    # Вывод порядка хода
-    print('Порядок хода игроков: ', end='')
-    for i in range(len(game.players)):
-        if i != len(game.players) - 1:  # Разделитель между игроками
-            end = ', '  # Если сейчас выводится не последний игрок, тогда выведи после него запятую
-        else:
-            end = '\n'  # Иначе – новую строку
-        print(f'{game.players[i].name}', end=end)
-    game.cp = game.players[game.current_player]
+    try:
+        game.number_of_players = int(input('Введите количество игроков:\n> '))  # Спрашиваем количество игроков (ожидая
+    # при этом целое число)
+    except ValueError:
+        print('Ожидается целое число')
+        start_new_game()
+    else:
+        for i in range(game.number_of_players):  # Создание профилей игроков в указанном количестве
+            game.players.append(Player(name=input(f'Введите имя игрока {i + 1}: ')))
+        # Сортировка игроков по убыванию стартовых очков (определение порядка хода, как в классической Монополии)
+        for i in range(len(game.players)):
+            # Исходно считаем наибольшим первый элемент
+            index = i
+            # Этот цикл перебирает несортированные элементы
+            for j in range(i + 1, len(game.players)):
+                if game.players[j].start_score > game.players[index].start_score:
+                    index = j
+            # Самый большой элемент меняем с первым в списке
+            game.players[i], game.players[index] = game.players[index], game.players[i]
+        # Вывод порядка хода
+        print('Порядок хода игроков: ', end='')
+        for i in range(len(game.players)):
+            if i != len(game.players) - 1:  # Разделитель между игроками
+                end = ', '  # Если сейчас выводится не последний игрок, тогда выведи после него запятую
+            else:
+                end = '\n'  # Иначе – новую строку
+            print(f'{game.players[i].name}', end=end)
+        # Создание алиаса для текущего игрока (зд.: первого, с индексом 0)
+        game.cp = game.players[game.current_player]
 
 
-def print_info():
-    print('===')
-    print(f'Сейчас ход игрока {game.cp.name}.')
-    print(f'У вас на счету: {game.cp.cur_balance}{game.currency}')
-    print(f'Вы находитесь на ячейке {game.field[game.cp.cur_coord]["name"]}.')
-    print('===')
-
-
-def escape_from_jail():
-    # Пытаемся освободить игрока
-    f_die, s_die = throw_a_die()
-    print('Бросаю кубики...', end=' ')
-    print(f'На кубиках выпало {f_die} и {s_die}.')
-    if f_die == s_die:  # Если выпадает дубль, то освобождаем
-        print(f'У вас получилось сбежать. Ваш ход, {game.cp.name}.')
-        game.cp.in_jail = False
-        game.cp.left_in_jail = 0
-        start_move()  # И даем право сходиться еще раз
-    else:  # Иначе, добавляем к заключению штрафные ходы (рандом от 1 до 3)
-        moves = random.randint(1, 3)
-        print(f'Не повезло... Вас поймали и дали дополнительный срок в {moves} ходов.')
-        game.cp.left_in_jail += moves
+def player_info():
+    if game.cp.in_jail and game.cp.cur_coord == 10:
+        state = ' (как заключенный)'
+    elif not game.cp.in_jail and game.cp.cur_coord == 10:
+        state = ' (как посетитель)'
+    else:
+        state = ''
+    print('====')
+    print(f'Ход игрока {game.cp.name}.')
+    print(f'Состояние счёта: {game.cp.cur_balance}{game.currency}.')
+    print(f'Позиция: {game.field[game.cp.cur_coord]["name"]}{state}.')
+    print(f'====')
 
 
 def start_move():
-    # Начало хода
-    print_info()
-    if game.cp.in_jail:  # Если игрок в тюрьме
-        print('Вы в тюрьме и не можете сделать ход но можете попытаться сбежать, если у вас выпадет дубль.')
+    bankrupt = False
+    if game.cp.cur_balance <= 0:
+        bankrupt = True
+        print('Вы банкрот!')
+    if game.cp.in_jail:
+        print('Вы находитесь в тюрьме и не можете ходиться.')
+        if game.cp.escape_card:  # Если карточек нет (то есть это свойство равно 0), то условие не сработает
+            print('Вы можете использовать карточки побега.')  # Можно получить среди карточек "Казна" или "Шанс"
+            if prompt('Использовать?'):
+                game.cp.escape_card -= 1
+                game.cp.in_jail = False
+                game.cp.left_in_jail = 0
+                start_move()
+        print('Вы можете попробовать сбежать из тюрьмы, если на кубиках выпадет дубль.')
         if prompt('Пробуем?'):
-            escape_from_jail()
+            f_die, s_die = throw_a_die()
+            if f_die == s_die:
+                print('У вас получилось сбежать!')
+                game.cp.in_jail = False
+                game.cp.left_in_jail = 0
+                start_move()
+            else:
+                add = random.randint(1, 3)
+                print(f'К сожалению вас поймали и дали дополнительный срок в {add} хода/ов.')
+                game.cp.left_in_jail += add
         else:
             game.cp.left_in_jail -= 1  # Вычитаем один ход из его заключения
-        if game.cp.left_in_jail != 0:
-            print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} ходов.')
+        if game.cp.left_in_jail != 0:  # Если заключение еще не прошло
+            print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} хода/ов.')
         else:  # Если время заключения прошло
             print('Вы вышли из тюрьмы.')
             game.cp.in_jail = False  # Освобождаем игрока
+            game.cp.left_in_jail = 0
             start_move()  # И даем возможность сходиться
     else:
-        bankrupt = False
-        if game.cp.cur_balance <= 0:  # Если баланс игрока меньше или равен нулю, тогда
-            print('Вы банкрот, голубчик!')
-            game.cp.cur_balance = 0
-            bankrupt = True  # Признаем его банкротом
-        print(f'Выберите действие:\n')
+        print('Выберите действие:')
         if not bankrupt:  # И ограничиваем действия
             print('1 – Бросить кубик')
         print('2 – Управление недвижимостью')
@@ -122,16 +139,13 @@ def start_move():
             if not bankrupt:
                 if move in [1, 2, 3]:
                     if move == 1:  # Бросить кубики и завершить ход
-                        print('бросаем кубики и делаем ход.')
-                        make_move()  # Сделать ход
-                        print('выполняем действия карточки.')
-                        move_actions()
-                        print('завершаем ход.')
+                        make_move()
                         complete_move()
                     elif move == 2:  # Начать управление недвижимостью
-                        property_management()
+                        manage_property()
                         start_move()
                     elif move == 3:  # Сдаться
+                        # Сдаёмся и удаляем профайл игрока
                         recognize_bankruptcy()
                 else:  # Неизвестная команда
                     print('Введите число от 1 до 3!')
@@ -139,10 +153,10 @@ def start_move():
             else:
                 if move in [2, 3]:
                     if move == 2:  # Начать управление недвижимостью
-                        property_management()
+                        manage_property()
                         start_move()
                     elif move == 3:  # Сдаться
-                        recognize_bankruptcy()
+                        pass
                 else:  # Неизвестная команда
                     print('Введите число от 2 до 3!')
                     start_move()
@@ -155,8 +169,8 @@ def move_actions():
         # Если ячейка никому не принадлежит и если ячейка не служебная (т. е. её можно купить)
         if game.field[game.cp.cur_coord]["price"] < game.cp.cur_balance:  # Если у игрока достаточно денег
             if prompt(f'Предприятие никому не принадлежит. Хотите купить?\n'
-                      f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}\n'
-                      f'У вас есть: {game.cp.cur_balance}'):  # Предлагаем игроку купить эту карточку
+                      f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}{game.currency}\n'
+                      f'У вас есть: {game.cp.cur_balance}{game.currency}'):  # Предлагаем игроку купить эту карточку
                 game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
                 game.cp.cur_balance -= game.field[game.players[
                     game.current_player].cur_coord]["price"]
@@ -195,64 +209,68 @@ def move_actions():
     if game.cp.cur_coord in [7, 34]:
         print('chance.')
         get_event_card('chance')
+    if game.cp.cur_coord == 29:
+        go_to_jail()
     pay_taxes()  # Заплотить нологе
-
-
-def auction():
-    print('аукцион.')
-
-
-def throw_a_die():
-    # Бросить кубики
-    return random.randint(1, 6), random.randint(1, 6)
-
-
-def move_player(dies: int = 0):
-    game.cp.last_coord = game.cp.cur_coord  # Сохраняем его предыдущуюю координату
-    game.cp.cur_coord += dies  # Перемещаем игрока на сумму, выпавшую на кубиках
-
-
-def new_lap():
-    game.cp.cur_coord = game.cp.cur_coord - game.cells
-    # Начинаем новый круг
-    if game.cp.cur_coord == 0:  # Если игрок остановился на ячейке "Старт"
-        pay_salary(400)  # Начисляем зарплату 400
-    else:  # Иначе, зарплата 200
-        pay_salary(200)
-
-
-def make_move():
-    # Сделать шаг
-    f_die, s_die = throw_a_die()
-    print('Бросаю кубики...', end=' ')
-    print(f'На кубиках выпало {f_die} и {s_die}.')
-    if f_die == s_die:  # Если выпал дубль
-        print('Какая неожиданность! Дубль дает вам право ходить еще раз.')
-        game.cp.takes += 1  # Добавляем единицу в счетчик
-        print(f'{game.cp.takes=}')
-        print(f'{game.cp.cur_coord=}')
-        move_player(f_die + s_die)
-        print(f'{game.cp.cur_coord=}')
-        move_actions()
-    else:  # Если цепочка дублей нарушилась
-        game.cp.takes = 0  # Обнуляем счетчик дублей
-    if game.cp.takes == 3:  # Если количество дублей равно 3
-        go_to_jail()  # Отправляем игрока в тюрьму
-    if not game.cp.in_jail:  # Если игрок не в тюрьме
-        move_player(f_die + s_die)
-        if game.cp.cur_coord == 30:  # Если игрок попал на ячейку "Отправляйся в тюрьму"
-            go_to_jail()  # Отправляем его в тюрьму
-        if game.cp.cur_coord > game.cells:  # Если координата игрока больше количества ячеек
-            new_lap()
 
 
 def complete_move():
     print(f'Ход игрока {game.cp.name} завершен.')
-    print('---')
     game.current_player += 1
     if game.current_player == game.number_of_players:
         game.current_player = 0
     game.cp = game.players[game.current_player]
+
+
+def make_move():
+    # Бросаем кубики
+    f_die, s_die = throw_a_die()
+    print(f'На кубиках выпало {f_die} и {s_die}.')
+    # Смещаем фишку игрока
+    game.cp.last_coord = game.cp.cur_coord
+    game.cp.cur_coord += f_die + s_die
+    if game.cp.cur_coord > game.cells:
+        game.cp.cur_coord -= game.cells
+        print(f'{game.cp.cur_coord}')
+        if game.cp.cur_coord == 0:
+            pay_salary(400)
+        else:
+            pay_salary(200)
+    # Выполняем действия карточки
+    move_actions()
+    if f_die == s_die:
+        # Выпал дубль, делаем еще один ход
+        print('Какая неожиданность! У вас выпал дубль. Дубль дает право на еще один ход.')
+        game.cp.takes += 1  # Добавляем единицу к счетчику
+        if game.cp.takes == 3:  # Если количество дублей подряд достигло трех, то
+            go_to_jail()  # Отправляем игрока в тюрьму
+        else:  # Иначе
+            make_move()  # Даем сходится еще раз
+    else:  # Если цепчока дублей нарушилась, тогда обнуляем счетчик дублей
+        game.cp.takes = 0
+
+
+def manage_property():
+    pass
+
+
+def recognize_bankruptcy():
+    # Признать банкротство
+    if prompt('Вы действительно хотите сдаться?'):  # Подтверждение
+        print('Серьёзно? Ну хорошо, ваше право...')
+        print(f'Удаление игрока {game.cp.name}.chr')  # Отсылочка для знающих :)
+        game.players.pop(game.current_player)
+    else:
+        print('Не пугайте меня так!')
+
+
+def go_to_jail():
+    # Отправляем игрока в тюрьму
+    print('Вы попали в тюрьму и должны пропустить три своих хода.')
+    game.cp.takes = 0  # Сбрасываем счетчик дублей
+    game.cp.in_jail = True  # Логически отправляем игрока в тюрьму
+    game.cp.left_in_jail = 3  # Начисляем ходы в заключении
+    game.cp.cur_coord = 10  # Физически отправляем игрока в тюрьму
 
 
 def pay_salary(value: int):
@@ -274,11 +292,11 @@ def pay_taxes():
         game.cp.cur_balance -= 100
 
 
-def property_management():
+def get_event_card(_type: str):
     pass
 
 
-def get_event_card(_type: str):
+def auction():
     pass
 
 
@@ -289,38 +307,19 @@ def prompt(msg: str):
     return False
 
 
-def recognize_bankruptcy():
-    # Признать банкротство
-    if prompt('Вы действительно хотите сдаться?'):  # Подтверждение
-        print('Серьёзно? Ну хорошо, ваше право...')
-        print(f'Удаление игрока {game.cp.name}.chr')  # Отсылочка для знающих :)
-        game.players.pop(game.current_player)
-    else:
-        print('Не пугайте меня так!')
-
-
-def go_to_jail():
-    print('Вы попали в тюрьму и пропускаете три своих хода.')
-    game.cp.takes = 0  # Обнуляем счетчик дублей
-    game.cp.in_jail = True  # Поместить игрока в тюрьму (логически)
-    game.cp.last_coord = game.cp.cur_coord
-    game.cp.cur_coord = 10  # Помесить игрока в тюрьму (практически)
-    game.cp.left_in_jail = 3  # Начислить три хода заключения
+def throw_a_die():
+    # Бросить кубики
+    return random.randint(1, 6), random.randint(1, 6)
 
 
 if __name__ == '__main__':
-    try:
-        game = Base()
-        start_new_game()
-        while len(game.players) > 1:
-            start_move()
-    except KeyboardInterrupt:
-        print('Игра завершена без сохранения прогресса.')
-    else:
-        try:
-            print(f'Игрок {game.players[0].name} одержал победу. Поздравляем!')
-        except IndexError:
-            pass
-else:
-    print('Игра требует запуска как отдельный файл.')
-    game = None
+    try:  # Пробуй
+        game = Base()  # Создать экземпляр игры
+        start_new_game()  # Начать новую игру
+        while len(game.players) > 1:  # Пока количество игроков больше единицы
+            player_info()  # Выведи информацию о текущем игроке
+            start_move()  # Начинай новый ход
+    except KeyboardInterrupt:  # Если игра принудительно завершена на ^C
+        print('\nИгра завершена без сохранения прогресса.')
+    else:  # Если игра завершилась без ручной остановки
+        print(f'Игрок {game.players[0].name} одержал победу. Поздравляем!')  # Поздравление
