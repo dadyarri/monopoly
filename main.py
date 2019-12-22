@@ -157,10 +157,10 @@ def move_actions():
     if game.field[game.cp.cur_coord]["owned_by"] is None and game.cp.cur_coord not in [0, 2, 4, 7, 10, 17, 20, 29, 34,
                                                                                        36]:
         # Если ячейка никому не принадлежит и если ячейка не служебная (т. е. её можно купить)
-        if game.field[game.cp.cur_coord]["price"] < game.cp.cur_balance:  # Если у игрока достаточно денег
-            if prompt(f'Предприятие никому не принадлежит. Хотите купить?\n'
-                      f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}{game.currency}\n'
-                      f'У вас есть: {game.cp.cur_balance}{game.currency}'):  # Предлагаем игроку купить эту карточку
+        if prompt(f'Предприятие никому не принадлежит. Хотите купить?\n'
+                  f'Её стоимость: {game.field[game.cp.cur_coord]["price"]}{game.currency}\n'
+                  f'У вас есть: {game.cp.cur_balance}{game.currency}'):  # Предлагаем игроку купить эту карточку
+            if game.field[game.cp.cur_coord]["price"] < game.cp.cur_balance:  # Если у игрока достаточно денег
                 game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
                 game.cp.cur_balance -= game.field[game.players[
                     game.current_player].cur_coord]["price"]
@@ -173,9 +173,9 @@ def move_actions():
                     game.cp.property[game.field[game.cp.cur_coord].category].append(game.field[game.cp.cur_coord])
                 print(f'Успех! Предприятие {game.field[game.cp.cur_coord]["name"]} теперь ваше!')
             else:
+                print('У вас недостаточно средств для покупки этой карточки.')
                 auction()
         else:
-            print('У вас недостаточно средств для покупки этой карточки.')
             auction()
     else:
         if game.field[game.cp.cur_coord]["owned_by"] is not None:  # Если ячейка принадлежит какому-то игроку
