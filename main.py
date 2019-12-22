@@ -31,6 +31,8 @@ class Player:
         self.base_balance = 1500  # Начальный баланс
         self.cur_balance = self.base_balance  # Текущий баланс
 
+        self.property = {}
+
         self.name = name  # Отображаемое имя
 
         self.start_score = sum(throw_a_die())  # Начальный бросок кубика
@@ -162,6 +164,13 @@ def move_actions():
                 game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
                 game.cp.cur_balance -= game.field[game.players[
                     game.current_player].cur_coord]["price"]
+                game.cp.property.setdefault(game.field[game.cp.cur_coord].category)
+                try:
+                    f = bool(len(game.cp.property.setdefault(game.field[game.cp.cur_coord].category)))
+                except TypeError:
+                    game.cp.property[game.field[game.cp.cur_coord].category] = list()
+                finally:
+                    game.cp.property[game.field[game.cp.cur_coord].category].append(game.field[game.cp.cur_coord])
                 print(f'Успех! Предприятие {game.field[game.cp.cur_coord]["name"]} теперь ваше!')
             else:
                 auction()
