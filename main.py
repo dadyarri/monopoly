@@ -103,18 +103,6 @@ def start_move():
                 game.cp.in_jail = False
                 game.cp.left_in_jail = 0
                 start_move()
-        print('Вы можете попробовать сбежать из тюрьмы, если на кубиках выпадет дубль.')
-        if prompt('Пробуем?'):
-            f_die, s_die = throw_a_die()
-            if f_die == s_die:
-                print('У вас получилось сбежать!')
-                game.cp.in_jail = False
-                game.cp.left_in_jail = 0
-                start_move()
-            else:
-                add = random.randint(1, 3)
-                print(f'К сожалению вас поймали и дали дополнительный срок в {add} хода/ов.')
-                game.cp.left_in_jail += add
         else:
             game.cp.left_in_jail -= 1  # Вычитаем один ход из его заключения
         if game.cp.left_in_jail != 0:  # Если заключение еще не прошло
