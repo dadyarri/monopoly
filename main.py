@@ -303,7 +303,7 @@ def get_event_card(_type: str):
 
 
 def auction():
-    pass
+    print(colored('Аукцион!', 'yellow', attrs=['blink']))
 
 
 def prompt(msg: str):
