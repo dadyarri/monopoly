@@ -266,6 +266,7 @@ def recognize_bankruptcy():
             if game.field[i]['owned_by'] == game.current_player:
                 game.field[i]['owned_by'] = None
         print('Собственность ушедшего игрока теперь принадлежит Банку.')
+        complete_move()
     else:
         print('Не пугайте меня так!')
 
