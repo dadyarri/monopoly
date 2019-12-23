@@ -162,13 +162,13 @@ def move_actions():
                 game.field[game.cp.cur_coord]["owned_by"] = game.current_player  # Покупаем
                 game.cp.cur_balance -= game.field[game.players[
                     game.current_player].cur_coord]["price"]
-                game.cp.property.setdefault(game.field[game.cp.cur_coord].category)
+                game.cp.property.setdefault(game.field[game.cp.cur_coord]['category'])
                 try:
-                    f = bool(len(game.cp.property.setdefault(game.field[game.cp.cur_coord].category)))
+                    f = bool(len(game.cp.property.setdefault(game.field[game.cp.cur_coord]['category'])))
                 except TypeError:
-                    game.cp.property[game.field[game.cp.cur_coord].category] = list()
+                    game.cp.property[game.field[game.cp.cur_coord]['category']] = list()
                 finally:
-                    game.cp.property[game.field[game.cp.cur_coord].category].append(game.field[game.cp.cur_coord])
+                    game.cp.property[game.field[game.cp.cur_coord]['category']].append(game.field[game.cp.cur_coord])
                 print(f'Успех! Предприятие {game.field[game.cp.cur_coord]["name"]} теперь ваше!')
             else:
                 print('У вас недостаточно средств для покупки этой карточки.')
