@@ -4,6 +4,8 @@
 
 import random
 
+from termcolor import colored
+
 from data import field
 
 
@@ -83,9 +85,11 @@ def player_info():
     else:
         state = ''
     print('====')
-    print(f'Ход игрока {game.cp.name}.')
-    print(f'Состояние счёта: {game.cp.cur_balance}{game.currency}.')
-    print(f'Позиция: {game.field[game.cp.cur_coord]["name"]}{state}.')
+    print(f'{colored("Ход игрока", attrs=["bold"])} {colored(game.cp.name, "magenta")}.')
+    print(f'{colored("Состояние счёта:", attrs=["bold"])} {colored(game.cp.cur_balance, "magenta")}'
+          f'{colored(game.currency, "magenta")}.')
+    print(f'{colored("Позиция:", attrs=["bold"])} {colored(game.field[game.cp.cur_coord]["name"], "magenta")}'
+          f'{colored(state, "magenta")}.')
     print(f'====')
 
 
