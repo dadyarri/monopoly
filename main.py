@@ -1,5 +1,4 @@
 # TODO: Дописать правила игры в README
-# TODO: Что делать с собственностью игрока, покинувшего игру?
 # TODO: Написать аукцион (вызывается, если игрок не хочет или не может выкупить Собственность)
 # TODO: Написать управление собственностью (аукцион; строительство; залог)
 
@@ -256,6 +255,10 @@ def recognize_bankruptcy():
         print('Серьёзно? Ну хорошо, ваше право...')
         print(f'Удаление игрока {game.cp.name}.chr')  # Отсылочка для знающих :)
         game.players.pop(game.current_player)
+        for i in range(len(game.field)):
+            if game.field[i]['owned_by'] == game.current_player:
+                game.field[i]['owned_by'] = None
+        print('Собственность ушедшего игрока теперь принадлежит Банку.')
     else:
         print('Не пугайте меня так!')
 
