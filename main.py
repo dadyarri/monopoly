@@ -246,7 +246,7 @@ def make_move():
 
 
 def manage_property():
-    pass
+    print(game.cp.property)
 
 
 def recognize_bankruptcy():
