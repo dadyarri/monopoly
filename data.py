@@ -323,7 +323,7 @@ field = [
     {
         'name': 'Улица Пушкина',
         'owned_by': None,
-        'category': 'light-Зелёный',
+        'category': 'Светло-зелёный',
         'price': 180,
         'pledge': 90,
         'buyout': 120,
@@ -363,7 +363,7 @@ field = [
     {
         'name': 'Проспект Мира',
         'owned_by': None,
-        'category': 'light-Зелёный',
+        'category': 'Светло-зелёный',
         'price': 180,
         'pledge': 90,
         'buyout': 120,
@@ -383,7 +383,7 @@ field = [
     {
         'name': 'Проспект Победы',
         'owned_by': None,
-        'category': 'light-Зелёный',
+        'category': 'Светло-зелёный',
         'price': 200,
         'pledge': 100,
         'buyout': 125,
