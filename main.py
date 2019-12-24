@@ -168,7 +168,7 @@ def move_actions():
                     game.current_player].cur_coord]["price"]
                 game.cp.property.setdefault(game.field[game.cp.cur_coord]['category'])
                 try:
-                    f = bool(len(game.cp.property.setdefault(game.field[game.cp.cur_coord]['category'])))
+                    _f = bool(len(game.cp.property.setdefault(game.field[game.cp.cur_coord]['category'])))
                 except TypeError:
                     game.cp.property[game.field[game.cp.cur_coord]['category']] = list()
                 finally:
