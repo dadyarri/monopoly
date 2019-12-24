@@ -109,13 +109,14 @@ def start_move():
                 start_move()
         else:
             game.cp.left_in_jail -= 1  # Вычитаем один ход из его заключения
-        if game.cp.left_in_jail != 0:  # Если заключение еще не прошло
-            print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} хода/ов.')
-        else:  # Если время заключения прошло
-            print('Вы вышли из тюрьмы.')
-            game.cp.in_jail = False  # Освобождаем игрока
-            game.cp.left_in_jail = 0
-            start_move()  # И даем возможность сходиться
+            if game.cp.left_in_jail != 0:  # Если заключение еще не прошло
+                print(f'Вам осталось провести в тюрьме {game.cp.left_in_jail} хода/ов.')
+                complete_move()
+            else:  # Если время заключения прошло
+                print('Вы вышли из тюрьмы.')
+                game.cp.in_jail = False  # Освобождаем игрока
+                game.cp.left_in_jail = 0
+                start_move()  # И даем возможность сходиться
     else:
         print('Выберите действие:')
         if not bankrupt:  # И ограничиваем действия
@@ -281,6 +282,7 @@ def go_to_jail():
     game.cp.in_jail = True  # Логически отправляем игрока в тюрьму
     game.cp.left_in_jail = 3  # Начисляем ходы в заключении
     game.cp.cur_coord = 10  # Физически отправляем игрока в тюрьму
+    complete_move()
 
 
 def pay_salary(value: int):
