@@ -234,7 +234,6 @@ def make_move():
     game.cp.cur_coord += f_die + s_die
     if game.cp.cur_coord > game.cells:
         game.cp.cur_coord -= game.cells
-        print(f'{game.cp.cur_coord}')
         if game.cp.cur_coord == 0:
             pay_salary(400)
         else:
@@ -286,7 +285,6 @@ def go_to_jail():
     game.cp.in_jail = True  # Логически отправляем игрока в тюрьму
     game.cp.left_in_jail = 3  # Начисляем ходы в заключении
     game.cp.cur_coord = 10  # Физически отправляем игрока в тюрьму
-    complete_move()
 
 
 def pay_salary(value: int):
