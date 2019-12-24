@@ -181,7 +181,8 @@ def move_actions():
         else:
             auction()
     else:
-        if game.field[game.cp.cur_coord]["owned_by"] is not None:  # Если ячейка принадлежит какому-то игроку
+        if game.field[game.cp.cur_coord]["owned_by"] is not None and game.field[game.cp.cur_coord]["owned_by"] != \
+                game.current_player:  # Если ячейка принадлежит какому-то игроку
             print(f'Предприятие {game.field[game.cp.cur_coord]["name"]} принадлежит '
                   f'игроку '
                   f'{game.players[game.field[game.cp.cur_coord]["owned_by"]].name}')
