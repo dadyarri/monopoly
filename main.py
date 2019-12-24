@@ -250,10 +250,13 @@ def make_move():
 
 
 def manage_property():
-    for k, v in game.cp.property.items():
-        for i in range(len(v)):
-            t = v[i]['name']
-            print(f'{k}: {t}')
+    if not game.cp.property:
+        print('У вас нет предприятий в собственности!')
+    else:
+        for k, v in game.cp.property.items():
+            for i in range(len(v)):
+                t = v[i]['name']
+                print(f'{k}: {t}')
 
 
 def recognize_bankruptcy():
