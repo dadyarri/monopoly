@@ -23,7 +23,7 @@ field = [
     {
         'name': 'Старая дорога',
         'owned_by': None,
-        'category': 'light-yellow',
+        'category': 'Светло-жёлтый',
         'price': 60,
         'pledge': 30,
         'buyout': 65,
@@ -43,7 +43,7 @@ field = [
     {
         'name': 'Казна',
         'owned_by': None,
-        'category': 'None',
+        'category': None,
         'price': None,
         'pledge': None,
         'buyout': None,
@@ -63,7 +63,7 @@ field = [
     {
         'name': 'Главное шоссе',
         'owned_by': None,
-        'category': 'light-yellow',
+        'category': 'Светло-жёлтый',
         'price': 60,
         'pledge': 30,
         'buyout': 65,
@@ -103,7 +103,7 @@ field = [
     {
         'name': 'Западный морской порт',
         'owned_by': None,
-        'category': 'ports',
+        'category': 'Порты',
         'price': 200,
         'pledge': 100,
         'buyout': 150,
@@ -123,7 +123,7 @@ field = [
     {
         'name': 'Аквапарк',
         'owned_by': None,
-        'category': 'yellow',
+        'category': 'Жёлтый',
         'price': 100,
         'pledge': 50,
         'buyout': 65,
@@ -163,7 +163,7 @@ field = [
     {
         'name': 'Городской парк',
         'owned_by': None,
-        'category': 'yellow',
+        'category': 'Жёлтый',
         'price': 100,
         'pledge': 50,
         'buyout': 65,
@@ -183,7 +183,7 @@ field = [
     {
         'name': 'Горнолыжный курорт',
         'owned_by': None,
-        'category': 'yellow',
+        'category': 'Жёлтый',
         'price': 120,
         'pledge': 60,
         'buyout': 85,
@@ -223,7 +223,7 @@ field = [
     {
         'name': 'Спальный район',
         'owned_by': None,
-        'category': 'green',
+        'category': 'Зелёный',
         'price': 140,
         'pledge': 70,
         'buyout': 85,
@@ -243,7 +243,7 @@ field = [
     {
         'name': 'Электрическая компания',
         'owned_by': None,
-        'category': 'utilities',
+        'category': 'Коммунальные службы',
         'price': 150,
         'pledge': 75,
         'buyout': 100,
@@ -263,7 +263,7 @@ field = [
     {
         'name': 'Деловой квартал',
         'owned_by': None,
-        'category': 'green',
+        'category': 'Зелёный',
         'price': 140,
         'pledge': 70,
         'buyout': 85,
@@ -283,7 +283,7 @@ field = [
     {
         'name': 'Торговая площадь',
         'owned_by': None,
-        'category': 'green',
+        'category': 'Зелёный',
         'price': 160,
         'pledge': 80,
         'buyout': 95,
@@ -303,7 +303,7 @@ field = [
     {
         'name': 'Северный морской порт',
         'owned_by': None,
-        'category': 'ports',
+        'category': 'Порты',
         'price': 200,
         'pledge': 100,
         'buyout': 150,
@@ -323,7 +323,7 @@ field = [
     {
         'name': 'Улица Пушкина',
         'owned_by': None,
-        'category': 'light-green',
+        'category': 'light-Зелёный',
         'price': 180,
         'pledge': 90,
         'buyout': 120,
@@ -363,7 +363,7 @@ field = [
     {
         'name': 'Проспект Мира',
         'owned_by': None,
-        'category': 'light-green',
+        'category': 'light-Зелёный',
         'price': 180,
         'pledge': 90,
         'buyout': 120,
@@ -383,7 +383,7 @@ field = [
     {
         'name': 'Проспект Победы',
         'owned_by': None,
-        'category': 'light-green',
+        'category': 'light-Зелёный',
         'price': 200,
         'pledge': 100,
         'buyout': 125,
@@ -423,7 +423,7 @@ field = [
     {
         'name': 'Бар',
         'owned_by': None,
-        'category': 'red',
+        'category': 'Красный',
         'price': 220,
         'pledge': 110,
         'buyout': 130,
@@ -443,7 +443,7 @@ field = [
     {
         'name': 'Ночной клуб',
         'owned_by': None,
-        'category': 'red',
+        'category': 'Красный',
         'price': 220,
         'pledge': 110,
         'buyout': 130,
@@ -463,7 +463,7 @@ field = [
     {
         'name': 'Ресторан',
         'owned_by': None,
-        'category': 'red',
+        'category': 'Красный',
         'price': 240,
         'pledge': 120,
         'buyout': 140,
@@ -483,7 +483,7 @@ field = [
     {
         'name': 'Восточный морской порт',
         'owned_by': None,
-        'category': 'ports',
+        'category': 'Порты',
         'price': 200,
         'pledge': 100,
         'buyout': 150,
@@ -503,7 +503,7 @@ field = [
     {
         'name': 'Компьютеры',
         'owned_by': None,
-        'category': 'pink',
+        'category': 'Розовый',
         'price': 260,
         'pledge': 130,
         'buyout': 150,
@@ -523,7 +523,7 @@ field = [
     {
         'name': 'Интернет',
         'owned_by': None,
-        'category': 'pink',
+        'category': 'Розовый',
         'price': 260,
         'pledge': 130,
         'buyout': 150,
@@ -543,7 +543,7 @@ field = [
     {
         'name': 'Водопроводная компания',
         'owned_by': None,
-        'category': 'utilities',
+        'category': 'Коммунальные службы',
         'price': 150,
         'pledge': 75,
         'buyout': 100,
@@ -563,7 +563,7 @@ field = [
     {
         'name': 'Сотовая связь',
         'owned_by': None,
-        'category': 'pink',
+        'category': 'Розовый',
         'price': 260,
         'pledge': 130,
         'buyout': 150,
@@ -603,7 +603,7 @@ field = [
     {
         'name': 'Морские перевозки',
         'owned_by': None,
-        'category': 'blue',
+        'category': 'Синий',
         'price': 300,
         'pledge': 150,
         'buyout': 170,
@@ -623,7 +623,7 @@ field = [
     {
         'name': 'Железная дорога',
         'owned_by': None,
-        'category': 'blue',
+        'category': 'Синий',
         'price': 300,
         'pledge': 150,
         'buyout': 170,
@@ -643,7 +643,7 @@ field = [
     {
         'name': 'Авиакомпания',
         'owned_by': None,
-        'category': 'blue',
+        'category': 'Синий',
         'price': 320,
         'pledge': 160,
         'buyout': 185,
@@ -663,7 +663,7 @@ field = [
     {
         'name': 'Южный морской порт',
         'owned_by': None,
-        'category': 'ports',
+        'category': 'Порты',
         'price': 200,
         'pledge': 100,
         'buyout': 150,
@@ -703,7 +703,7 @@ field = [
     {
         'name': 'Курортная зона',
         'owned_by': None,
-        'category': 'light-blue',
+        'category': 'Голубой',
         'price': 350,
         'pledge': 175,
         'buyout': 190,
@@ -723,7 +723,7 @@ field = [
     {
         'name': 'Гостиничный комплекс',
         'owned_by': None,
-        'category': 'light-blue',
+        'category': 'Голубой',
         'price': 400,
         'pledge': 200,
         'buyout': 220,
