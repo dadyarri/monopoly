@@ -156,7 +156,8 @@ def start_move():
 
 
 def move_actions():
-    print(f'Вы находитесь на ячейке {game.field[game.cp.cur_coord]["name"]}')
+    print(f'Вы находитесь на ячейке {game.field[game.cp.cur_coord]["name"]} ('
+          f'{game.field[game.cp.cur_coord]["category"]})')
     if game.field[game.cp.cur_coord]["owned_by"] is None and game.cp.cur_coord not in [0, 2, 4, 7, 10, 17, 20, 29, 34,
                                                                                        36]:
         # Если ячейка никому не принадлежит и если ячейка не служебная (т. е. её можно купить)
