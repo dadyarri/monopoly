@@ -213,6 +213,7 @@ def move_actions():
         get_event_card('chance')
     if game.cp.cur_coord == 29:
         go_to_jail()
+        return None
     pay_taxes()  # Заплотить нологе
 
 
@@ -246,6 +247,7 @@ def make_move():
         game.cp.takes += 1  # Добавляем единицу к счетчику
         if game.cp.takes >= 3:  # Если количество дублей подряд достигло трех, то
             go_to_jail()  # Отправляем игрока в тюрьму
+            return None
         else:  # Иначе
             make_move()  # Даем сходится еще раз
     else:  # Если цепчока дублей нарушилась, тогда обнуляем счетчик дублей
