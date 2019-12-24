@@ -95,9 +95,9 @@ def player_info():
 
 def start_move():
     bankrupt = False
-    if game.cp.cur_balance <= 0:
-        bankrupt = True
-        print('Вы банкрот!')
+    if game.cp.cur_balance <= 0:  # Если баланс игрока меньше или равен нулю
+        bankrupt = True  # Тогда признаем его банкротом
+        print(colored('Вы банкрот!', 'red', attrs=['bold', 'blink']))
     if game.cp.in_jail:
         print('Вы находитесь в тюрьме и не можете ходиться.')
         if game.cp.escape_card:  # Если карточек нет (то есть это свойство равно 0), то условие не сработает
