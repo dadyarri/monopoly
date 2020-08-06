@@ -1,4 +1,4 @@
-venv_monopoly/
+venv/
 .idea
 __pycache__/
 .vscode/
