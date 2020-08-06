@@ -6,12 +6,12 @@ import random
 
 from termcolor import colored
 
-from data import field
+import yaml
 
 
 # Базовый класс, описывающий игровую сессию
 class Base:
-    def __init__(self):
+    def __init__(self, field):
         self.field = field  # Берет разметку игрового поля из файла data.py
         self.players = []  # Список с объектами игроков
         self.current_player = 0  # Номер текущего игрока
@@ -328,7 +328,8 @@ def throw_a_die():
 
 if __name__ == '__main__':
     try:  # Пробуй
-        game = Base()  # Создать экземпляр игры
+        field = yaml.full_load(open("field.yml", "r"))
+        game = Base(field)  # Создать экземпляр игры
         start_new_game()  # Начать новую игру
         while len(game.players) > 1:  # Пока количество игроков больше единицы
             player_info()  # Выведи информацию о текущем игроке
